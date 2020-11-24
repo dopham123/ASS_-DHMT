@@ -1,0 +1,9 @@
+﻿  stdafx.cpp
+  supportClass.cpp
+  Mesh.cpp
+c:\users\admin\desktop\consoleapplication1\consoleapplication1\mesh.cpp(13): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+  Lab2.cpp
+  ConsoleApplication1.cpp
+  Generating Code...
+LINK : warning LNK4067: ambiguous entry point; selected 'mainCRTStartup'
+LINK : fatal error LNK1104: cannot open file 'glut32.lib'

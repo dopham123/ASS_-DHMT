@@ -1,0 +1,4 @@
+﻿  Mesh.cpp
+c:\users\admin\desktop\consoleapplication1\consoleapplication1\mesh.cpp(13): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+  ConsoleApplication1.vcxproj -> C:\Users\Admin\Desktop\ConsoleApplication1\Debug\ConsoleApplication1.exe
+  ConsoleApplication1.vcxproj -> C:\Users\Admin\Desktop\ConsoleApplication1\Debug\ConsoleApplication1.pdb (Full PDB)
