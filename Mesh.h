@@ -43,6 +43,10 @@ public:
 	
 	int		numFaces;
 	Face*		face;
+
+	float slideX, slideY, slideZ;
+	float rotateX, rotateY, rotateZ;
+	float scaleX, scaleY, scaleZ;
 public:
 	Mesh()
 	{

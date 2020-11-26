@@ -1,9 +1,30 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Mesh.h"
 #include <math.h>
+#include <iostream>
+#include "supportClass.h"
+
+using namespace std;
 
 #define PI			3.1415926
 #define	COLORNUM		14
+
+// Khai bao Mesh
+#pragma region
+Mesh	tetrahedron;
+Mesh	DeDao;
+Mesh	cylinder;
+Mesh	LuoiDao;
+Mesh	CanDao;
+Mesh	GiaDo1;
+Mesh	GiaDo2;
+Mesh	TayNoi;
+Mesh	chot;
+
+
+int		screenWidth = 1200;
+int		screenHeight = 600;
+#pragma endregion
 
 // Mesh
 #pragma region
@@ -305,7 +326,7 @@ void Mesh::CreateCylinder(int nSegment, float fHeight, float fRadius)
 }
 
 
-void Mesh::CreateLuoiDao(float	fSizeX, float	fSizeY, float	fSizeZ, int nSegment, float fRadius)
+void Mesh::CreateLuoiDao(float fSizeX, float fSizeY, float fSizeZ, int nSegment, float fRadius)
 {
 	int		i;
 	int		idx;
@@ -1356,7 +1377,522 @@ void Mesh::CreateTayNoi(float fRadius, float fSizeY, int nSegment)
 #pragma endregion
 
 // Kich thuoc
-
 #pragma region
+int nSegment = 20;
+float base1RotateStep = 5;
 
+// De Dao
+float deX = 5;
+float deY = 0.3;
+float deZ = 1.5;
+
+// Chot noi
+float cHeight = 1.1;
+float cRadius = 0.15;
+
+// Luoi Dao
+float lX = 4;
+float lY = 0.5;
+float lZ = 0.8;
+float lRadius = 0.5;
+
+// Can Dao
+float canY = 0.5;
+float canRadius = 0.2;
+
+// Gia do 1
+float gia1X = 1;
+float gia1Y = 0.5;
+
+// Gia do 2
+float gia2X = 0.7;
+float gia2Y = 0.5;
+
+// Tay noi
+float tayRadius = 0.3;
+float tayY = 0.5;
+
+bool isWireFrameMode = false;	//che dong khung hay to mau
+bool turnOnLight2 = true;	// phim d D
+bool isModeViewing = false;		// v V chuyen doi mode viewing
+
+								// Tham so cho camera
+float camera_angle;
+float camera_height;
+float camera_dis;
+float camera_X, camera_Y, camera_Z;
+float lookAt_X, lookAt_Y, lookAt_Z;
 #pragma endregion
+
+//callback Event(keyboard)
+#pragma region
+void myKeyboard(unsigned char key, int x, int y) {
+	switch (key)
+	{
+	case '1':
+		DeDao.rotateY += base1RotateStep;
+		if (DeDao.rotateY > 360)
+			DeDao.rotateY -= 360;
+		break;
+	case '2':
+		DeDao.rotateY -= base1RotateStep;
+		if (DeDao.rotateY < 0)
+			DeDao.rotateY += 360;
+		break;
+	case 'w':
+	case 'W':
+		isWireFrameMode = !isWireFrameMode;
+		break;
+	case 'd':
+	case 'D':
+		turnOnLight2 = !turnOnLight2;
+		break;
+	case 'v':
+	case 'V':
+		isModeViewing = !isModeViewing;
+		break;
+	case '+':
+		camera_dis += 0.5;
+		break;
+	case '-':
+		camera_dis -= 0.5;
+		break;
+	}
+	glutPostRedisplay();
+}
+
+void mySpecialKeyboard(int key, int x, int y) {
+	switch (key)
+	{
+	case GLUT_KEY_UP:
+		camera_height += 0.5;
+		break;
+	case GLUT_KEY_DOWN:
+		camera_height -= 0.5;
+		break;
+	case GLUT_KEY_RIGHT:
+		camera_angle += 5;
+		break;
+	case GLUT_KEY_LEFT:
+		camera_angle -= 5;
+		break;
+	default:
+		break;
+	}
+	glutPostRedisplay();
+}
+#pragma endregion
+
+//init
+void init() {
+	camera_angle = -30;  // Góc quay camera xung quanh trục Oy
+	camera_height = 5.5; // Chiều cao camera so với mặt phẳng xOz
+	camera_dis = 6.5;	// Khoảng cách đến trục Oy
+
+	lookAt_X = 0;
+	lookAt_Y = 1;
+	lookAt_Z = 0;
+
+	float fHalfSize = 4;
+
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+	glFrontFace(GL_CCW);
+	glEnable(GL_DEPTH_TEST);
+
+
+	const float ar = (float)screenWidth / (float)screenHeight;
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glFrustum(-ar, ar, -1.0, 1.0, 1.5, 50.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	glEnable(GL_NORMALIZE);
+	glShadeModel(GL_SMOOTH);
+	glDepthFunc(GL_LEQUAL);
+	//glEnable(GL_COLOR_MATERIAL);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// Lighting
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+	GLfloat lmodel_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+
+	GLfloat light_ambient0[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat light_diffuse0[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light_specular0[] = { 1.0, 1.0, 1.0, 1.0 };
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse0);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient0);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular0);
+}
+
+
+
+
+
+void initObject()
+{
+	// De Dao
+	DeDao.CreateCuboid(deX, deY, deZ);
+	DeDao.SetColor(2);
+	DeDao.CalculateFacesNorm();
+
+	// Chot noi
+	chot.CreateCylinder(nSegment, cHeight, cRadius);
+	chot.SetColor(3);
+	chot.CalculateFacesNorm();
+
+	// Luoi Dao
+	LuoiDao.CreateLuoiDao(lX, lY, lZ, nSegment, lRadius);
+	LuoiDao.SetColor(4);
+	LuoiDao.CalculateFacesNorm();
+
+	// Can Dao
+	CanDao.CreateCanDao(canY, nSegment, canRadius);
+	CanDao.SetColor(5);
+	CanDao.CalculateFacesNorm();
+
+	// Gia Do 1
+	GiaDo1.CreateGiaDo1(gia1X, gia1Y, nSegment);
+	GiaDo1.SetColor(6);
+	GiaDo1.CalculateFacesNorm();
+
+	// Gia Do 2
+	GiaDo2.CreateGiaDo2(gia2X, gia2Y, nSegment);
+	GiaDo2.SetColor(7);
+	GiaDo2.CalculateFacesNorm();
+
+	// Tay Noi
+	TayNoi.CreateTayNoi(tayRadius, tayY, nSegment);
+	TayNoi.SetColor(8);
+	TayNoi.CalculateFacesNorm();
+}
+
+// Ve vat the
+#pragma region
+void drawDeDao()
+{
+	glPushMatrix();
+	glTranslated(0, -0.3, 0);
+	glRotatef(0, 0, 1, 0);
+
+	// He so cua vat the
+	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
+	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat shininess = 40.0;
+	DeDao.setupMaterial(ambient, diffuse, specular, shininess);
+
+	if (isWireFrameMode)
+		DeDao.DrawWireframe();
+	else
+		DeDao.Draw();
+
+	glPopMatrix();
+}
+
+void drawChotNoi()
+{
+	glPushMatrix();
+	glTranslated(0, 0.5, 0);
+	glRotatef(90, 1, 0, 0);
+	glTranslated(0.2, 0.5, -0.3);
+
+	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat diffuse[] = { 0.2, 0.2, 1.0, 1.0 };
+	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat shininess = 40.0;
+	chot.setupMaterial(ambient, diffuse, specular, shininess);
+
+	if (isWireFrameMode)
+		chot.DrawWireframe();
+	else
+		chot.Draw();
+	glPopMatrix();
+
+	// Chot 2
+	glPushMatrix();
+	glTranslated(0, 0.5, 0);
+	glRotatef(90, 1, 0, 0);
+	glTranslated(-1.4, 0.5, -0.4);
+
+	chot.setupMaterial(ambient, diffuse, specular, shininess);
+
+	if (isWireFrameMode)
+		chot.DrawWireframe();
+	else
+		chot.Draw();
+	glPopMatrix();
+
+	// Chot 3
+	glPushMatrix();
+	glTranslated(0, 0.5, 0);
+	glRotatef(90, 1, 0, 0);
+	glTranslated(0.2, 0.5, -1.3);
+
+	chot.setupMaterial(ambient, diffuse, specular, shininess);
+
+	if (isWireFrameMode)
+		chot.DrawWireframe();
+	else
+		chot.Draw();
+	glPopMatrix();
+
+	// Chot 4
+	glPushMatrix();
+	glTranslated(0, 0.5, 0);
+	glRotatef(90, 1, 0, 0);
+	glTranslated(1.2, 0.5, -1.9);
+
+	chot.setupMaterial(ambient, diffuse, specular, shininess);
+
+	if (isWireFrameMode)
+		chot.DrawWireframe();
+	else
+		chot.Draw();
+	glPopMatrix();
+}
+
+void drawLuoiDao()
+{
+	glPushMatrix();
+
+	glTranslated(0, 0, 0);
+	glRotatef(90, 1, 0, 0);
+	glTranslated(0.5, 0, -0.55);
+
+	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
+	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat shininess = 40.0;
+	LuoiDao.setupMaterial(ambient, diffuse, specular, shininess);
+
+	if (isWireFrameMode)
+		LuoiDao.DrawWireframe();
+	else
+		LuoiDao.Draw();
+
+	glPopMatrix();
+}
+
+void drawCanDao()
+{
+	glPushMatrix();
+
+	glTranslated(0, 4.2, 0);
+	glRotatef(90, 1, 0, 0);
+	glTranslated(4.5, 0, -0.1);
+	glRotatef(30, 0, 1, 0);
+
+	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
+	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat shininess = 40.0;
+	CanDao.setupMaterial(ambient, diffuse, specular, shininess);
+
+	if (isWireFrameMode)
+		CanDao.DrawWireframe();
+	else
+		CanDao.Draw();
+
+	glPopMatrix();
+}
+
+void drawGiaDo1() {
+	glPushMatrix();
+
+	glTranslated(0, 1, 0);
+	glRotatef(90, 1, 0, 0);
+	glTranslated(-1, 0.5, 0.5);
+	glScalef(0.75, 1, 0.5);
+
+	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
+	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat shininess = 40.0;
+	GiaDo1.setupMaterial(ambient, diffuse, specular, shininess);
+
+	if (isWireFrameMode)
+		GiaDo1.DrawWireframe();
+	else
+		GiaDo1.Draw();
+
+	glPopMatrix();
+}
+
+void drawGiaDo2() {
+	glPushMatrix();
+
+	glTranslated(0, 0, 0);
+	glRotatef(90, 1, 0, 0);
+	glTranslated(2.5, 0.5, 0);
+	glRotatef(-90, 0, 1, 0);
+
+	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
+	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat shininess = 40.0;
+	GiaDo2.setupMaterial(ambient, diffuse, specular, shininess);
+
+	if (isWireFrameMode)
+		GiaDo2.DrawWireframe();
+	else
+		GiaDo2.Draw();
+
+	glPopMatrix();
+}
+
+void drawTayNoi() {
+	glPushMatrix();
+
+	glTranslated(0, 1, 0);
+	glRotatef(90, 1, 0, 0);
+	glTranslated(0.2, 0.5, -0.3);
+	glRotatef(90, 0, 1, 0);
+
+	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
+	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat shininess = 40.0;
+	TayNoi.setupMaterial(ambient, diffuse, specular, shininess);
+
+	if (isWireFrameMode)
+		TayNoi.DrawWireframe();
+	else
+		TayNoi.Draw();
+
+	glPopMatrix();
+}
+#pragma endregion
+
+void drawAll()
+{
+	drawDeDao();
+	drawChotNoi();
+	drawLuoiDao();
+	drawCanDao();
+	drawGiaDo1();
+	drawGiaDo2();
+	drawTayNoi();
+
+}
+
+void drawAxis()
+{
+	glColor3f(0, 0, 1);
+	glBegin(GL_LINES);
+	glVertex3f(0, 0, 0);
+	glVertex3f(4, 0, 0);
+
+	glVertex3f(0, 0, 0);
+	glVertex3f(0, 4, 0);
+
+	glVertex3f(0, 0, 0);
+	glVertex3f(0, 0, 4);
+	glEnd();
+}
+
+void mydisplay() {
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GLfloat light_position0[] = { 10.0, 10.0, 10.0, 0.0 };
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position0);
+
+	drawAxis();
+	// bat tat nguon sang thu 2
+	if (turnOnLight2 == true)
+	{
+		glEnable(GL_LIGHT1);
+		GLfloat diffuse1[] = { 1.0, 1.0, 1.0, 1.0 };
+		GLfloat specular1[] = { 1.0, 1.0, 1.0, 1.0 };
+		GLfloat ambient1[] = { 0.0, 0.0, 0.0, 1.0 };
+		GLfloat position1[] = { -10.0, 10.0, -10.0, 0.0 };
+
+		glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse1);
+		glLightfv(GL_LIGHT1, GL_AMBIENT, ambient1);
+		glLightfv(GL_LIGHT1, GL_SPECULAR, specular1);
+		glLightfv(GL_LIGHT1, GL_POSITION, position1);
+	}
+	else
+		glDisable(GL_LIGHT1);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	camera_X = camera_dis * sinf(camera_angle * PI / 180);
+	camera_Y = camera_height;
+	camera_Z = camera_dis * cosf(camera_angle * PI / 180);
+
+
+	// che do nhin
+	if (isModeViewing) {
+		gluLookAt(0, 15, 0, 0, 0, 0, 0, 0, -1);
+	}
+	else if (camera_dis == 0)
+	{
+		gluLookAt(camera_X, camera_Y, camera_Z, lookAt_X, lookAt_Y, lookAt_Z, sinf(camera_angle * PI / 180), 0, cosf(camera_angle * PI / 180));
+	}
+	else
+	{
+		gluLookAt(camera_X, camera_Y, camera_Z, lookAt_X, lookAt_Y, lookAt_Z, 0, 1, 0);
+	}
+
+	glViewport(0, 0, screenWidth, screenHeight);
+
+	//// Clear depth
+	glClearDepth(1.0f);
+	//// Draw
+	drawAll();
+	/* Don't update color or depth. */
+	glDisable(GL_DEPTH_TEST);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+
+	//// Blend the floor onto the screen
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//drawNen(0.5f);
+	glDisable(GL_BLEND);
+
+	glFlush();
+	glutSwapBuffers();
+}
+
+void consoleLog() {
+	cout << "1, 2: Xoay de" << endl;
+	cout << "W, w: Chuyen doi qua lai giua che do khung day va to mau" << endl;
+	cout << "V, v: Chuyen doi qua lai giua hai che do nhin khac nhau" << endl;
+	cout << "A, a: Turn on / off animation" << endl;
+	cout << "+   : Tang khoang cach camera" << endl;
+	cout << "-   : Giam khoang cach camera" << endl;
+	cout << "up arrow  : Tang chieu cao camera" << endl;
+	cout << "down arrow: Giam chieu cao camera" << endl;
+	cout << "<-        : Quay camera theo chieu kim dong ho" << endl;
+	cout << "->        : Quay camera nguoc chieu kim dong ho" << endl;
+	cout << "D, d: Bat/tat nguon sang thu 2" << endl;
+	cout << "A, a: Bat/tat nguon che do hoat hinh" << endl;
+}
+
+
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+	glutInit(&argc, (char**)argv);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+	glutInitWindowSize(screenWidth, screenHeight);
+	glutCreateWindow("Pham Van Do - 1711035");
+	initObject();
+	init();
+	consoleLog();
+	glutKeyboardFunc(myKeyboard);
+	glutSpecialFunc(mySpecialKeyboard);
+	glutDisplayFunc(mydisplay);
+	glutMainLoop();
+	return 0;
+}
