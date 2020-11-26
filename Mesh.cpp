@@ -5,169 +5,13 @@
 #define PI			3.1415926
 #define	COLORNUM		14
 
-
+// Mesh
+#pragma region
 float	ColorArr[COLORNUM][3] = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, { 0.0,  0.0, 1.0}, 
 								{1.0, 1.0,  0.0}, { 1.0, 0.0, 1.0},{ 0.0, 1.0, 1.0}, 
 								 {0.3, 0.3, 0.3}, {0.5, 0.5, 0.5}, { 0.9,  0.9, 0.9},
 								{1.0, 0.5,  0.5}, { 0.5, 1.0, 0.5},{ 0.5, 0.5, 1.0},
 									{0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}};
-
-
-
-
-
-void Mesh::CreateCylinder(int nSegment, float fHeight, float fRadius)
-{
-	numVerts=nSegment*2 + 2;
-	pt = new Point3[numVerts];
-
-	int		i;
-	int		idx;
-	float	fAngle = 2*PI/nSegment;
-	float	x, y, z;
-
-	pt[0].set(0, fHeight/2, 0);
-	for(i = 0; i<nSegment; i++)
-	{
-		x = fRadius* cos(fAngle*i);
-		z = fRadius* sin(fAngle*i);
-		y = fHeight/2;
-		pt[i+1].set(x, y, z);
-
-		y = -fHeight/2;
-		pt[i +1 + nSegment].set(x, y, z);
-	}
-	pt[numVerts-1].set(0, -fHeight/2, 0);
-
-	numFaces= nSegment*3;
-	face = new Face[numFaces];
-
-	idx = 0;
-	for(i = 0; i<nSegment; i++)
-	{
-		face[idx].nVerts = 3;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = 0;
-		if(i < nSegment -1)
-			face[idx].vert[1].vertIndex = i + 2;
-		else
-			face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = i + 1;
-		idx++;
-	}
-
-	for(i = 0; i<nSegment; i++)
-	{
-		face[idx].nVerts = 4;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		
-		face[idx].vert[0].vertIndex = i+1;
-		if(i <nSegment - 1)
-			face[idx].vert[1].vertIndex = i+2;
-		else
-			face[idx].vert[1].vertIndex = 1;
-		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + nSegment;
-		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + nSegment;
-
-		idx++;
-	}
-
-	for(i = 0; i<nSegment; i++)
-	{
-		face[idx].nVerts = 3;
-		face[idx].vert = new VertexID[face[idx].nVerts];
-		face[idx].vert[0].vertIndex = numVerts - 1;
-		if(i < nSegment -1)
-			face[idx].vert[2].vertIndex = i + 2 + nSegment;
-		else
-			face[idx].vert[2].vertIndex = 1 + nSegment;
-		face[idx].vert[1].vertIndex = i + 1 + nSegment;
-		idx++;
-	}
-
-}
-
-void Mesh::CreateCube(float	fSizeX, float	fSizeY, float	fSizeZ)
-{
-	int i;
-
-	numVerts=8;
-	pt = new Point3[numVerts];
-	pt[0].set(-fSizeX, fSizeY, fSizeZ);
-	pt[1].set( fSizeX, fSizeY, fSizeZ);
-	pt[2].set( fSizeX, fSizeY, -fSizeZ);
-	pt[3].set(-fSizeX, fSizeY, -fSizeZ);
-	pt[4].set(-fSizeX, -fSizeY, fSizeZ);
-	pt[5].set( fSizeX, -fSizeY, fSizeZ);
-	pt[6].set( fSizeX, -fSizeY, -fSizeZ);
-	pt[7].set(-fSizeX, -fSizeY, -fSizeZ);
-
-
-	numFaces= 6;
-	face = new Face[numFaces];
-
-	//Left face
-	face[0].nVerts = 4;
-	face[0].vert = new VertexID[face[0].nVerts];
-	face[0].vert[0].vertIndex = 1;
-	face[0].vert[1].vertIndex = 5;
-	face[0].vert[2].vertIndex = 6;
-	face[0].vert[3].vertIndex = 2;
-	for(i = 0; i<face[0].nVerts ; i++)
-		face[0].vert[i].colorIndex = 0;
-	
-	//Right face
-	face[1].nVerts = 4;
-	face[1].vert = new VertexID[face[1].nVerts];
-	face[1].vert[0].vertIndex = 0;
-	face[1].vert[1].vertIndex = 3;
-	face[1].vert[2].vertIndex = 7;
-	face[1].vert[3].vertIndex = 4;
-	for(i = 0; i<face[1].nVerts ; i++)
-		face[1].vert[i].colorIndex = 1;
-
-	//top face
-	face[2].nVerts = 4;
-	face[2].vert = new VertexID[face[2].nVerts];
-	face[2].vert[0].vertIndex = 0;
-	face[2].vert[1].vertIndex = 1;
-	face[2].vert[2].vertIndex = 2;
-	face[2].vert[3].vertIndex = 3;
-	for(i = 0; i<face[2].nVerts ; i++)
-		face[2].vert[i].colorIndex = 2;
-
-	//bottom face
-	face[3].nVerts = 4;
-	face[3].vert = new VertexID[face[3].nVerts];
-	face[3].vert[0].vertIndex = 7;
-	face[3].vert[1].vertIndex = 6;
-	face[3].vert[2].vertIndex = 5;
-	face[3].vert[3].vertIndex = 4;
-	for(i = 0; i<face[3].nVerts ; i++)
-		face[3].vert[i].colorIndex = 3;
-
-	//near face
-	face[4].nVerts = 4;
-	face[4].vert = new VertexID[face[4].nVerts];
-	face[4].vert[0].vertIndex = 4;
-	face[4].vert[1].vertIndex = 5;
-	face[4].vert[2].vertIndex = 1;
-	face[4].vert[3].vertIndex = 0;
-	for(i = 0; i<face[4].nVerts ; i++)
-		face[4].vert[i].colorIndex = 4;
-
-	//Far face
-	face[5].nVerts = 4;
-	face[5].vert = new VertexID[face[5].nVerts];
-	face[5].vert[0].vertIndex = 3;
-	face[5].vert[1].vertIndex = 2;
-	face[5].vert[2].vertIndex = 6;
-	face[5].vert[3].vertIndex = 7;
-	for(i = 0; i<face[5].nVerts ; i++)
-		face[5].vert[i].colorIndex = 5;
-
-}
-
 
 void Mesh::CreateTetrahedron()
 {
@@ -218,7 +62,6 @@ void Mesh::CreateTetrahedron()
 		face[3].vert[i].colorIndex = 3;
 }
 
-
 void Mesh::DrawWireframe()
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -255,7 +98,214 @@ void Mesh::DrawColor()
 	}
 }
 
-void Mesh::CreatShape1(float	fSizeX, float	fSizeY, float	fSizeZ, int nSegment, float fRadius)
+void Mesh::SetColor(int colorIdx)
+{
+	for (int f = 0; f < numFaces; f++)
+	{
+		for (int v = 0; v < face[f].nVerts; v++)
+		{
+			face[f].vert[v].colorIndex = colorIdx;
+		}
+	}
+}
+
+void Mesh::CalculateFacesNorm()
+{
+	for (int f = 0; f < numFaces; f++)
+	{
+		float mx = 0, my = 0, mz = 0;
+		for (int v = 0; v < face[f].nVerts; v++)
+		{
+			int iv = face[f].vert[v].vertIndex;
+			int next = face[f].vert[(v + 1) % face[f].nVerts].vertIndex;
+			mx += (pt[iv].y - pt[next].y) * (pt[iv].z + pt[next].z);
+			my += (pt[iv].z - pt[next].z) * (pt[iv].x + pt[next].x);
+			mz += (pt[iv].x - pt[next].x) * (pt[iv].y + pt[next].y);
+		}
+		face[f].facenorm.set(mx, my, mz);
+		face[f].facenorm.normalize();
+	}
+}
+
+// To mau
+void Mesh::Draw()
+{
+	for (int f = 0; f < numFaces; f++)
+	{
+		glBegin(GL_POLYGON);
+		for (int v = 0; v < face[f].nVerts; v++)
+		{
+			int iv = face[f].vert[v].vertIndex;
+			glNormal3f(face[f].facenorm.x, face[f].facenorm.y, face[f].facenorm.z);
+			glVertex3f(pt[iv].x, pt[iv].y, pt[iv].z);
+		}
+		glEnd();
+	}
+}
+
+// Thiet lap vat lieu cho doi tuong 
+void Mesh::setupMaterial(float ambient[], float diffuse[], float specular[], float shiness)
+{
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shiness);
+}
+
+void Mesh::CreateCuboid(float	fSizeX, float	fSizeY, float	fSizeZ)
+{
+	int i;
+
+	numVerts = 8;
+	pt = new Point3[numVerts];
+	pt[0].set(-fSizeX, fSizeY, fSizeZ);
+	pt[1].set(fSizeX, fSizeY, fSizeZ);
+	pt[2].set(fSizeX, fSizeY, -fSizeZ);
+	pt[3].set(-fSizeX, fSizeY, -fSizeZ);
+	pt[4].set(-fSizeX, -fSizeY, fSizeZ);
+	pt[5].set(fSizeX, -fSizeY, fSizeZ);
+	pt[6].set(fSizeX, -fSizeY, -fSizeZ);
+	pt[7].set(-fSizeX, -fSizeY, -fSizeZ);
+
+
+	numFaces = 6;
+	face = new Face[numFaces];
+
+	//Left face
+	face[0].nVerts = 4;
+	face[0].vert = new VertexID[face[0].nVerts];
+	face[0].vert[0].vertIndex = 1;
+	face[0].vert[1].vertIndex = 5;
+	face[0].vert[2].vertIndex = 6;
+	face[0].vert[3].vertIndex = 2;
+	for (i = 0; i<face[0].nVerts; i++)
+		face[0].vert[i].colorIndex = 0;
+
+	//Right face
+	face[1].nVerts = 4;
+	face[1].vert = new VertexID[face[1].nVerts];
+	face[1].vert[0].vertIndex = 0;
+	face[1].vert[1].vertIndex = 3;
+	face[1].vert[2].vertIndex = 7;
+	face[1].vert[3].vertIndex = 4;
+	for (i = 0; i<face[1].nVerts; i++)
+		face[1].vert[i].colorIndex = 1;
+
+	//top face
+	face[2].nVerts = 4;
+	face[2].vert = new VertexID[face[2].nVerts];
+	face[2].vert[0].vertIndex = 0;
+	face[2].vert[1].vertIndex = 1;
+	face[2].vert[2].vertIndex = 2;
+	face[2].vert[3].vertIndex = 3;
+	for (i = 0; i<face[2].nVerts; i++)
+		face[2].vert[i].colorIndex = 2;
+
+	//bottom face
+	face[3].nVerts = 4;
+	face[3].vert = new VertexID[face[3].nVerts];
+	face[3].vert[0].vertIndex = 7;
+	face[3].vert[1].vertIndex = 6;
+	face[3].vert[2].vertIndex = 5;
+	face[3].vert[3].vertIndex = 4;
+	for (i = 0; i<face[3].nVerts; i++)
+		face[3].vert[i].colorIndex = 3;
+
+	//near face
+	face[4].nVerts = 4;
+	face[4].vert = new VertexID[face[4].nVerts];
+	face[4].vert[0].vertIndex = 4;
+	face[4].vert[1].vertIndex = 5;
+	face[4].vert[2].vertIndex = 1;
+	face[4].vert[3].vertIndex = 0;
+	for (i = 0; i<face[4].nVerts; i++)
+		face[4].vert[i].colorIndex = 4;
+
+	//Far face
+	face[5].nVerts = 4;
+	face[5].vert = new VertexID[face[5].nVerts];
+	face[5].vert[0].vertIndex = 3;
+	face[5].vert[1].vertIndex = 2;
+	face[5].vert[2].vertIndex = 6;
+	face[5].vert[3].vertIndex = 7;
+	for (i = 0; i<face[5].nVerts; i++)
+		face[5].vert[i].colorIndex = 5;
+
+}
+
+void Mesh::CreateCylinder(int nSegment, float fHeight, float fRadius)
+{
+	numVerts = nSegment * 2 + 2;
+	pt = new Point3[numVerts];
+
+	int		i;
+	int		idx;
+	float	fAngle = 2 * PI / nSegment;
+	float	x, y, z;
+
+	pt[0].set(0, fHeight / 2, 0);
+	for (i = 0; i<nSegment; i++)
+	{
+		x = fRadius* cos(fAngle*i);
+		z = fRadius* sin(fAngle*i);
+		y = fHeight / 2;
+		pt[i + 1].set(x, y, z);
+
+		y = -fHeight / 2;
+		pt[i + 1 + nSegment].set(x, y, z);
+	}
+	pt[numVerts - 1].set(0, -fHeight / 2, 0);
+
+	numFaces = nSegment * 3;
+	face = new Face[numFaces];
+
+	idx = 0;
+	for (i = 0; i<nSegment; i++)
+	{
+		face[idx].nVerts = 3;
+		face[idx].vert = new VertexID[face[idx].nVerts];
+		face[idx].vert[0].vertIndex = 0;
+		if (i < nSegment - 1)
+			face[idx].vert[1].vertIndex = i + 2;
+		else
+			face[idx].vert[1].vertIndex = 1;
+		face[idx].vert[2].vertIndex = i + 1;
+		idx++;
+	}
+
+	for (i = 0; i<nSegment; i++)
+	{
+		face[idx].nVerts = 4;
+		face[idx].vert = new VertexID[face[idx].nVerts];
+
+		face[idx].vert[0].vertIndex = i + 1;
+		if (i <nSegment - 1)
+			face[idx].vert[1].vertIndex = i + 2;
+		else
+			face[idx].vert[1].vertIndex = 1;
+		face[idx].vert[2].vertIndex = face[idx].vert[1].vertIndex + nSegment;
+		face[idx].vert[3].vertIndex = face[idx].vert[0].vertIndex + nSegment;
+
+		idx++;
+	}
+
+	for (i = 0; i<nSegment; i++)
+	{
+		face[idx].nVerts = 3;
+		face[idx].vert = new VertexID[face[idx].nVerts];
+		face[idx].vert[0].vertIndex = numVerts - 1;
+		if (i < nSegment - 1)
+			face[idx].vert[2].vertIndex = i + 2 + nSegment;
+		else
+			face[idx].vert[2].vertIndex = 1 + nSegment;
+		face[idx].vert[1].vertIndex = i + 1 + nSegment;
+		idx++;
+	}
+
+}
+
+
+void Mesh::CreateLuoiDao(float	fSizeX, float	fSizeY, float	fSizeZ, int nSegment, float fRadius)
 {
 	int		i;
 	int		idx;
@@ -401,7 +451,7 @@ void Mesh::CreatShape1(float	fSizeX, float	fSizeY, float	fSizeZ, int nSegment, f
 
 }
 
-void Mesh::CreatShape2(float fSizeY, int nSegment, float fRadius1)
+void Mesh::CreateCanDao(float fSizeY, int nSegment, float fRadius1)
 {
 	int		i;
 	int		idx, idx2;
@@ -670,7 +720,7 @@ void Mesh::CreatShape2(float fSizeY, int nSegment, float fRadius1)
 
 }
 
-void Mesh::CreatShape3(float fSizeX, float fSizeY, int nSegment)
+void Mesh::CreateGiaDo1(float fSizeX, float fSizeY, int nSegment)
 {
 	int		i;
 	int		idx;
@@ -899,7 +949,7 @@ void Mesh::CreatShape3(float fSizeX, float fSizeY, int nSegment)
 
 }
 
-void Mesh::CreatShape4(float fSizeX, float fSizeY, int nSegment)
+void Mesh::CreateGiaDo2(float fSizeX, float fSizeY, int nSegment)
 {
 	int		i;
 	int		idx;
@@ -1102,7 +1152,7 @@ void Mesh::CreatShape4(float fSizeX, float fSizeY, int nSegment)
 
 }
 
-void Mesh::CreatShape5(float fRadius, float fSizeY, int nSegment)
+void Mesh::CreateTayNoi(float fRadius, float fSizeY, int nSegment)
 {
 	int		i;
 	int		idx, idx2;
@@ -1303,4 +1353,10 @@ void Mesh::CreatShape5(float fRadius, float fSizeY, int nSegment)
 	}
 
 }
+#pragma endregion
 
+// Kich thuoc
+
+#pragma region
+
+#pragma endregion

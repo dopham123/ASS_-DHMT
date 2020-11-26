@@ -16,6 +16,8 @@ class Face
 public:
 	int		nVerts;
 	VertexID*	vert;
+
+	Vector3 facenorm; // Chua phap tuyen cua mat
 	
 	Face()
 	{
@@ -66,13 +68,18 @@ public:
 	void DrawColor();
 
 	void CreateTetrahedron();
-	void CreateCube(float	fSizeX, float	fSizeY, float	fSizeZ);
+	void CreateCuboid(float	fSizeX, float	fSizeY, float	fSizeZ);
 	void CreateCylinder(int nSegment, float fHeight, float fRadius);
-	void CreatShape1(float	fSizeX, float	fSizeY, float	fSizeZ, int nSegment, float fRadius);
-	void CreatShape2(float fSizeY, int nSegment, float fRadius1);
-	void CreatShape3(float fSizeX, float fSizeY, int nSegment);
-	void CreatShape4(float fSizeX, float fSizeY, int nSegment);
-	void CreatShape5(float fRadius, float fSizeY, int nSegment);
+	void CreateLuoiDao(float	fSizeX, float	fSizeY, float	fSizeZ, int nSegment, float fRadius);
+	void CreateCanDao(float fSizeY, int nSegment, float fRadius1);
+	void CreateGiaDo1(float fSizeX, float fSizeY, int nSegment);
+	void CreateGiaDo2(float fSizeX, float fSizeY, int nSegment);
+	void CreateTayNoi(float fRadius, float fSizeY, int nSegment);
+
+	void SetColor(int colorIdx);
+	void CalculateFacesNorm();
+	void Draw();
+	void setupMaterial(float ambient[], float diffuse[], float specular[], float shiness);
 };
 
 #endif

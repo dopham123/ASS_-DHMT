@@ -16,11 +16,12 @@ int		screenHeight= 600;
 Mesh	tetrahedron;
 Mesh	cube;
 Mesh	cylinder;
-Mesh	shape1;
-Mesh	shape2;
-Mesh	shape3;
-Mesh	shape4;
-Mesh	shape5;
+Mesh	LuoiDao;
+Mesh	CanDao;
+Mesh	GiaDo1;
+Mesh	GiaDo2;
+Mesh	TayNoi;
+Mesh	chot;
 
 int		nChoice = 1;
 
@@ -50,42 +51,42 @@ void myDisplay()
 	drawAxis();
 
 	glColor3f(0, 0, 0);
-	if(nChoice == 1)
-		tetrahedron.DrawWireframe();
-	else if(nChoice == 2)
-		cube.DrawWireframe();
-	else if (nChoice == 3)
-		cylinder.DrawWireframe();
-	else if (nChoice == 4)
-		shape1.DrawWireframe();
-	else if (nChoice == 5)
-		shape2.DrawWireframe();
-	else if (nChoice == 6)
-		shape3.DrawWireframe();
-	else if (nChoice == 7)
-		shape4.DrawWireframe();
-	else if (nChoice == 8)
-		shape5.DrawWireframe();
+	//if(nChoice == 1)
+	//	tetrahedron.DrawWireframe();
+	//else if(nChoice == 2)
+	//	cube.DrawWireframe();
+	//else if (nChoice == 3)
+	//	cylinder.DrawWireframe();
+	//else if (nChoice == 4)
+	//	LuoiDao.DrawWireframe();
+	//else if (nChoice == 5)
+	//	CanDao.DrawWireframe();
+	//else if (nChoice == 6)
+	//	GiaDo1.DrawWireframe();
+	//else if (nChoice == 7)
+	//	GiaDo2.DrawWireframe();
+	//else if (nChoice == 8)
+		TayNoi.DrawWireframe();
 
 	glViewport(screenWidth/2, 0, screenWidth/2, screenHeight);
 
 	drawAxis();
-	if (nChoice == 1)
-		tetrahedron.DrawColor();
-	else if (nChoice == 2)
-		cube.DrawColor();
-	else if (nChoice == 3)
-		cylinder.DrawColor();
-	else if (nChoice == 4)
-		shape1.DrawColor();
-	else if (nChoice == 5)
-		shape2.DrawColor();
-	else if (nChoice == 6)
-		shape3.DrawColor();
-	else if (nChoice == 7)
-		shape4.DrawColor();
-	else if (nChoice == 8)
-		shape5.DrawColor();
+	//if (nChoice == 1)
+	//	tetrahedron.DrawColor();
+	//else if (nChoice == 2)
+	//	cube.DrawColor();
+	//else if (nChoice == 3)
+	//	cylinder.DrawColor();
+	//else if (nChoice == 4)
+	//	LuoiDao.DrawColor();
+	//else if (nChoice == 5)
+	//	CanDao.DrawColor();
+	//else if (nChoice == 6)
+	//	GiaDo1.DrawColor();
+	//else if (nChoice == 7)
+	//	GiaDo2.DrawColor();
+	//else if (nChoice == 8)
+	//	TayNoi.DrawColor();
 
 	glFlush();
     glutSwapBuffers();
@@ -116,7 +117,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	cout << "7. Shape4" << endl;
 	cout << "8. Shape5" << endl;
 	cout << "Input the choice: " << endl;
-	cin  >> nChoice;
+	//cin  >> nChoice;
 
 	glutInit(&argc, (char**)argv); //initialize the tool kit
 	glutInitDisplayMode(GLUT_DOUBLE |GLUT_RGB | GLUT_DEPTH);//set the display mode
@@ -125,13 +126,13 @@ int _tmain(int argc, _TCHAR* argv[])
 	glutCreateWindow("Lab 2"); // open the screen window
 
 	tetrahedron.CreateTetrahedron();
-	cube.CreateCube(2,1,1);
+	cube.CreateCuboid(2,1,1);
 	cylinder.CreateCylinder(10, 2, 0.5);
-	shape1.CreatShape1(4, 0.5, 0.8, 7, 0.5);
-	shape2.CreatShape2(0.3, 10, 0.2);
-	shape3.CreatShape3(1, 0.4, 5);
-	shape4.CreatShape4(1, 0.4, 10);
-	shape5.CreatShape5(0.5, 0.4, 10);
+	LuoiDao.CreateLuoiDao(4, 0.5, 0.8, 7, 0.5);
+	CanDao.CreateCanDao(0.3, 10, 0.2);
+	GiaDo1.CreateGiaDo1(1, 0.4, 5);
+	GiaDo2.CreateGiaDo2(1, 0.4, 10);
+	TayNoi.CreateTayNoi(0.5, 0.4, 10);
 
 	myInit();
     glutDisplayFunc(myDisplay);
