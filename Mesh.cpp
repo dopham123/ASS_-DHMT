@@ -28,11 +28,21 @@ int		screenHeight = 600;
 
 // Mesh
 #pragma region
-float	ColorArr[COLORNUM][3] = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, { 0.0,  0.0, 1.0}, 
-								{1.0, 1.0,  0.0}, { 1.0, 0.0, 1.0},{ 0.0, 1.0, 1.0}, 
-								 {0.3, 0.3, 0.3}, {0.5, 0.5, 0.5}, { 0.9,  0.9, 0.9},
-								{1.0, 0.5,  0.5}, { 0.5, 1.0, 0.5},{ 0.5, 0.5, 1.0},
-									{0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}};
+float ColorArr[COLORNUM][3] = {
+	{1.0, 0.0, 0.0},
+	{0.0, 1.0, 0.0},
+	{0.0, 0.0, 1.0},
+	{1.0, 1.0, 0.0},
+	{1.0, 0.0, 1.0},
+	{0.0, 1.0, 1.0},
+	{0.3, 0.3, 0.3},
+	{0.5, 0.5, 0.5},
+	{0.9, 0.9, 0.9},
+	{1.0, 0.5, 0.5},
+	{0.5, 1.0, 0.5},
+	{0.5, 0.5, 1.0},
+	{0.0, 0.0, 0.0},
+	{1.0, 1.0, 1.0}};
 
 void Mesh::CreateTetrahedron()
 {
@@ -157,6 +167,7 @@ void Mesh::Draw()
 		for (int v = 0; v < face[f].nVerts; v++)
 		{
 			int iv = face[f].vert[v].vertIndex;
+			glColor3f(ColorArr[iv][0], ColorArr[iv][1], ColorArr[iv][2]);
 			glNormal3f(face[f].facenorm.x, face[f].facenorm.y, face[f].facenorm.z);
 			glVertex3f(pt[iv].x, pt[iv].y, pt[iv].z);
 		}
@@ -334,7 +345,7 @@ void Mesh::CreateLuoiDao(float fSizeX, float fSizeY, float fSizeZ, int nSegment,
 	float	x, y, z;
 
 
-	numVerts = 10 + nSegment*2;
+	numVerts = 10 + (nSegment-1)*2;
 	pt = new Point3[numVerts];
 	pt[0].set(0, fSizeY, -fSizeZ);
 	pt[1].set(0, 0, -fSizeZ);
@@ -480,7 +491,7 @@ void Mesh::CreateCanDao(float fSizeY, int nSegment, float fRadius1)
 	float	x, y, z;
 
 
-	numVerts = 20 + nSegment * 4;
+	numVerts = 20 + (nSegment - 1) * 4;
 	pt = new Point3[numVerts];
 	pt[0].set(-fRadius1, fSizeY, 0);
 	pt[1].set(-fRadius1, 0, 0);
@@ -1530,10 +1541,6 @@ void init() {
 	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular0);
 }
 
-
-
-
-
 void initObject()
 {
 	// De Dao
@@ -1830,7 +1837,7 @@ void mydisplay() {
 
 	// che do nhin
 	if (isModeViewing) {
-		gluLookAt(0, 15, 0, 0, 0, 0, 0, 0, -1);
+		gluLookAt(0, 0, 15, 2, 2, -4, 0, 1, 0);
 	}
 	else if (camera_dis == 0)
 	{
