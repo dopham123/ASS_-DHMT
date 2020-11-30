@@ -161,6 +161,7 @@ void Mesh::CalculateFacesNorm()
 // To mau
 void Mesh::Draw()
 {
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	for (int f = 0; f < numFaces; f++)
 	{
 		glBegin(GL_POLYGON);
@@ -1610,7 +1611,7 @@ void drawChotNoi()
 	glTranslated(0.2, 0.5, -0.3);
 
 	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 0.2, 0.2, 1.0, 1.0 };
+	GLfloat diffuse[] = { 56.0f/255.0f, 45.0f/255.0f, 44.0f/255.0f, 1.0f };
 	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat shininess = 40.0;
 	chot.setupMaterial(ambient, diffuse, specular, shininess);
@@ -1672,7 +1673,7 @@ void drawLuoiDao()
 	glRotatef(90, 1, 0, 0);
 	glTranslated(0.5, 0, -0.55);
 
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
+	GLfloat diffuse[] = { 0.0, 0.0, 1.0, 1.0 };
 	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
 	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat shininess = 40.0;
@@ -1695,7 +1696,7 @@ void drawCanDao()
 	glTranslated(4.5, 0, -0.1);
 	glRotatef(30, 0, 1, 0);
 
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
+	GLfloat diffuse[] = { 0.0, 1.0, 0.0, 1.0 };
 	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
 	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat shininess = 40.0;
@@ -1717,7 +1718,7 @@ void drawGiaDo1() {
 	glTranslated(-1, 0.5, 0.5);
 	glScalef(0.75, 1, 0.5);
 
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
+	GLfloat diffuse[] = { 1.0f, 228.0f / 255.0f, 181.0f / 255.0f, 1.0f };
 	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
 	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat shininess = 40.0;
@@ -1739,7 +1740,7 @@ void drawGiaDo2() {
 	glTranslated(2.5, 0.5, 0);
 	glRotatef(-90, 0, 1, 0);
 
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
+	GLfloat diffuse[] = { 1.0f, 228.0f/255.0f, 181.0f/255.0f, 1.0f };
 	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
 	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat shininess = 40.0;
@@ -1761,7 +1762,7 @@ void drawTayNoi() {
 	glTranslated(0.2, 0.5, -0.3);
 	glRotatef(90, 0, 1, 0);
 
-	GLfloat diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
+	GLfloat diffuse[] = { 1.0, 0.0, 1.0, 1.0 };
 	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
 	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat shininess = 40.0;
@@ -1773,6 +1774,151 @@ void drawTayNoi() {
 		TayNoi.Draw();
 
 	glPopMatrix();
+}
+
+Point3 lineInter(Point3 p1, Point3 p2, Point3 p3, Point3 p4) {
+	Point3 t;
+
+	float A1, A2, B1, B2;
+	A1 = (p2.z - p1.z) / (p2.x - p1.x);
+	B1 = p1.z - A1*p1.x;
+
+	A2 = (p4.z - p3.z) / (p4.x - p3.x);
+	B2 = p3.z - A2*p3.x;
+
+	t.x = (B2 - B1) / (A1 - A2);
+	t.z = A1*t.x + B1;
+	t.y = p1.y;
+	return t;
+}
+
+void drawGach(float x, float y, float z) {
+	Point3 A,B,C,D,E,F,G,H,I,K,L,M,N,P,Q,R,S;
+	A.set(x, y, z);
+	B.set(x - 1, y, z + 3);
+	C.set(x + 0.5, y, z + 1.5);
+	D.set(x - 1, y, z + 1);
+	E.set(x - 1, y, z + 2);
+	F.set(x , y, z + 3);
+	G.set(x + 1, y, z + 3);
+	H.set(x + 2, y, z + 3);
+	I.set(x + 2, y, z + 2);
+	K.set(x + 2, y, z + 1);
+	L.set(x + 2, y, z);
+	M.set(x + 1, y, z);
+	Q.set(x - 0.25, y, z + 2.25);
+	N = lineInter(A, B, C, D);
+	P = lineInter(A, B, Q, E);
+	R = lineInter(B, I, Q, F);
+	S = lineInter(B, I, C, G);
+
+
+	glColor3f(0.5, 0.5, 0.5);
+	glBegin(GL_POLYGON);
+	glVertex3f(M.x, M.y, M.z);
+	glVertex3f(C.x, C.y, C.z);
+	glVertex3f(N.x, N.y, N.z);
+	glVertex3f(A.x, A.y, A.z);
+	glEnd();
+
+	glBegin(GL_POLYGON);
+	glVertex3f(K.x, K.y, K.z);
+	glVertex3f(C.x, C.y, C.z);
+	glVertex3f(S.x, S.y, S.z);
+	glVertex3f(I.x, I.y, I.z);
+	glEnd();
+
+	glBegin(GL_POLYGON);
+	glVertex3f(G.x, G.y, G.z);
+	glVertex3f(S.x, S.y, S.z);
+	glVertex3f(R.x, R.y, R.z);
+	glVertex3f(F.x, F.y, F.z);
+	glEnd();
+
+	glBegin(GL_POLYGON);
+	glVertex3f(B.x, B.y, B.z);
+	glVertex3f(R.x, R.y, R.z);
+	glVertex3f(Q.x, Q.y, Q.z);
+	glVertex3f(P.x, P.y, P.z);
+	glEnd();
+
+	glBegin(GL_POLYGON);
+	glVertex3f(E.x, E.y, E.z);
+	glVertex3f(P.x, P.y, P.z);
+	glVertex3f(N.x, N.y, N.z);
+	glVertex3f(D.x, D.y, D.z);
+	glEnd();
+
+	/*glColor3f(0, 0, 0);
+	glBegin(GL_LINE);
+	glVertex3f(2, -0.6, 0); glVertex3f(3, -0.6, 3);
+	glVertex3f(3, -0.6, 3); glVertex3f(6, -0.6, 4);
+	glVertex3f(4, -0.6, 0); glVertex3f(4.5, -0.6, 1.5);
+	glVertex3f(4.5, -0.6, 1.5); glVertex3f(6, -0.6, 2);
+	glVertex3f(0, -0.6, 4); glVertex3f(3, -0.6, 3);
+	glVertex3f(2, -0.6, 6); glVertex3f(3, -0.6, 3);
+	glVertex3f(0, -0.6, 2); glVertex3f(6, -0.6, 0);
+	glVertex3f(4, -0.6, 6); glVertex3f(6, -0.6, 0);
+	glEnd();*/
+}
+
+//void setCameraVolume(float l, float r, float b, float t) {
+//	glMatrixMode(GL_PROJECTION);
+//	glLoadIdentity();
+//	gluOrtho2D((GLdouble)l, (GLdouble)r, (GLdouble)b, (GLdouble)t);
+//}
+
+//void setViewport(float l, float r, float b, float t) {
+//	glViewport(l, b, r - l, t - b);
+//}
+
+void drawBlock() {
+	glPushMatrix();
+	// tâm: C.set(x + 0.5, y, z + 1.5);
+	drawGach(1, -0.6, -3);
+	glRotatef(90, 0, 1, 0);
+	drawGach(1, -0.6, -3);
+	glRotatef(90, 0, 1, 0);
+	drawGach(1, -0.6, -3);
+	glRotatef(90, 0, 1, 0);
+	drawGach(1, -0.6, -3);
+	glPopMatrix();
+}
+
+void drawNen() {
+	glDisable(GL_LIGHTING);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	for (int x = 30; x > -30; x-=6) {
+		for (int z = 20; z > -20; z -= 6) {
+			glPushMatrix();
+			glTranslated(x, 0, z);
+			drawBlock();
+			// tâm: C.set(x + 0.5, y, z + 1.5);
+			/*glTranslated(-(x + 0.5), 0, -(z + 1.5));
+			glRotatef(90, 0, 1, 0);
+			glTranslated((x + 0.5), 0, (z + 1.5));
+			drawGach(x,-0.6,z);*/
+			glPopMatrix();
+		}
+		/*int w = size / 2 * (loop % 2);
+		int h = size / 2 * (loop / 2);
+
+		
+
+		setViewport(size / 4 + w, size / 2 + w, size / 4 + h, size / 2 + h);
+		setCameraVolume(0, 6, 6, 0);
+		drawGach();
+
+		setViewport(size / 4 + w, size / 2 + w, 0+h, size / 4 + h);
+		setCameraVolume(6, 0, 6, 0);
+		drawGach();
+
+		glPolygonMode(GL_FRONT, GL_FILL);
+		setViewport(0 + w, size / 4 + w, 0 + h, size / 4 + h);
+		setCameraVolume(0, 6, 6, 0);
+		drawGach();*/
+	}
+	glEnable(GL_LIGHTING);
 }
 #pragma endregion
 
@@ -1788,20 +1934,20 @@ void drawAll()
 
 }
 
-void drawAxis()
-{
-	glColor3f(0, 0, 1);
-	glBegin(GL_LINES);
-	glVertex3f(0, 0, 0);
-	glVertex3f(4, 0, 0);
-
-	glVertex3f(0, 0, 0);
-	glVertex3f(0, 4, 0);
-
-	glVertex3f(0, 0, 0);
-	glVertex3f(0, 0, 4);
-	glEnd();
-}
+//void drawAxis()
+//{
+//	glColor3f(0, 0, 1);
+//	glBegin(GL_LINES);
+//	glVertex3f(0, 0, 0);
+//	glVertex3f(4, 0, 0);
+//
+//	glVertex3f(0, 0, 0);
+//	glVertex3f(0, 4, 0);
+//
+//	glVertex3f(0, 0, 0);
+//	glVertex3f(0, 0, 4);
+//	glEnd();
+//}
 
 void mydisplay() {
 
@@ -1809,7 +1955,6 @@ void mydisplay() {
 	GLfloat light_position0[] = { 10.0, 10.0, 10.0, 0.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position0);
 
-	drawAxis();
 	// bat tat nguon sang thu 2
 	if (turnOnLight2 == true)
 	{
@@ -1854,6 +1999,17 @@ void mydisplay() {
 	glClearDepth(1.0f);
 	//// Draw
 	drawAll();
+	if (!isModeViewing) {
+		drawNen();
+	}
+	//cout << isWireFrameMode << endl;
+	//glTranslated(0, 0.3, 0);
+	glPushMatrix();
+	glScalef(1, -1, 1);
+	glTranslatef(0, 1.2, 0);
+	drawAll();
+	glPopMatrix();
+	//drawNen();
 	/* Don't update color or depth. */
 	glDisable(GL_DEPTH_TEST);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -1864,7 +2020,9 @@ void mydisplay() {
 	//// Blend the floor onto the screen
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//drawNen(0.5f);
+	
+	//drawBlock();
+	//drawGach(9, -0.6, 9);
 	glDisable(GL_BLEND);
 
 	glFlush();
