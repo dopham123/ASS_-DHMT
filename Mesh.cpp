@@ -1972,6 +1972,17 @@ void mydisplay() {
 	else
 		glDisable(GL_LIGHT1);
 
+	if (isModeViewing) {
+		glEnable(GL_LIGHT2);
+		GLfloat diffuse2[] = { 1.0, 1.0, 1.0, 1.0 };
+		GLfloat light_position2[] = { 0.0, 0.0, -1.0, 0.0 };
+		glLightfv(GL_LIGHT2, GL_DIFFUSE, diffuse2);
+		glLightfv(GL_LIGHT2, GL_POSITION, light_position2);
+	}
+	else {
+		glDisable(GL_LIGHT2);
+	}
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
